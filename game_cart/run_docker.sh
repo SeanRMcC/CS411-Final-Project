@@ -7,7 +7,7 @@ CONTAINER_PORT=5000
 DB_VOLUME_PATH="./db"
 BUILD=true
 
-if ["$BUILD" = true ]; then
+if [ "$BUILD" = true ]; then
     echo "Building Docker image..."
     docker build -t ${IMAGE_NAME}:${CONTAINER_TAG} .
 else 
@@ -35,9 +35,9 @@ else
 fi
 
 echo "Running Docker container..."
+# Can add --env-file .env once we need an env file
 docker run -d \
   --name ${IMAGE_NAME}_container \
-  --env-file .env \
   -p ${HOST_PORT}:${CONTAINER_PORT} \
   -v ${DB_VOLUME_PATH}:/app/db \
   ${IMAGE_NAME}:${CONTAINER_TAG}

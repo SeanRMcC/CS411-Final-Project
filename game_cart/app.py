@@ -4,10 +4,10 @@ from game_cart.db import db
 
 app = Flask(__name__)
 
-db.init_app(app)
+#db.init_app(app)
 
-with app.context():
-    db.create_all()
+#with app.context():
+#    db.create_all()
 
 @app.route("/api/health", methods=["GET"])
 def healthcheck() -> Response:
