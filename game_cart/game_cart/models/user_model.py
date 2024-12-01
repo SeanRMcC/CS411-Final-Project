@@ -3,10 +3,12 @@ import logging
 import os
 
 from sqlalchemy.exc import IntegrityError
+from game_cart.utils.logger import configure_logger
 
 from game_cart.db import db
 
 logger = logging.getLogger(__name__)
+configure_logger(logger)
 
 class User(db.Model):
 
