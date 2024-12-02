@@ -2,6 +2,7 @@ from flask import Flask, jsonify, make_response, Response, request
 
 from game_cart.db import db
 from game_cart.models.user_model import User
+from game_cart.utils.cheapsharkapi import search_for_games
 
 app = Flask(__name__)
 
@@ -145,6 +146,34 @@ def update_password() -> Response:
     except Exception as e:
         app.logger.error("Failed to update password: %s", str(e))
         return make_response(jsonify({"error": str(e)}), 500)
+    
+####################################################
+#
+# Game cart routes
+#
+####################################################
 
+@app.route("/search-games/<keyword>", methods=["GET"])
+def search_games(keyword: str) -> Response:
+    """
+        Route to search for games given a keyword.
+
+        Path Parameters:
+            - keyword (str): The keyword that will be used to search for the games.
+
+        Returns:
+            JSON response with the list of games matching the search.
+        Raises:
+            500 error if there is an issue retrieving the games from the api.
+    """
+    app.logger.info(f"Searching for games with keyword {keyword}")
+    try:
+        games = search_for_games(keyword)
+
+        return make_response(jsonify({"games": games}), 200)
+    except Exception as e:
+        app.logger.error(f"Error searching for games: {e}")
+        return make_response(jsonify({"error": str(e)}), 500)
+    
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
