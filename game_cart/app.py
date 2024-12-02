@@ -2,7 +2,8 @@ from flask import Flask, jsonify, make_response, Response, request
 
 from game_cart.db import db
 from game_cart.models.user_model import User
-from game_cart.utils.cheapsharkapi import search_for_games
+from game_cart.models.game_model import Games
+from game_cart.utils.cheapsharkapi import search_for_games, get_game_info
 
 app = Flask(__name__)
 
@@ -174,6 +175,55 @@ def search_games(keyword: str) -> Response:
     except Exception as e:
         app.logger.error(f"Error searching for games: {e}")
         return make_response(jsonify({"error": str(e)}), 500)
+
+@app.route("/add-game", methods=["POST"])
+def add_game() -> Response:
+    """
+        Route to add a game to teh cart.
+
+        Expected JSON Input:
+            - id (int): The id of the game that will be added.
+
+        Returns:
+            JSON response indicating the success of adding the game.
+        Raises:
+            400 error if input validation fails.
+            404 error if id does not correspond to a game.
+            500 error if there is an issue adding the game to the database.
+    """
+
+    app.logger.info("Adding game to cart")
+
+    try:
+        data = request.get_json()
+
+        id = data.get("id")
+        
+        if not id:
+            raise ValueError("An id must be specified.")
+        
+        id = int(id)
+
+        info = get_game_info(id)
+
+        if info == {}:
+            app.logger.info("Game with id %d does not exist", id)
+            return make_response(jsonify({"error": f"id {id} does not correspond to a game"}), 404)
+        
+        game_id, name, price = info["id"], info["name"], info["price"]
+
+        app.logger.info("Adding game: %d, %s, %.2f", game_id, name, price)
+        Games.create_game(game_id, name, price)
+
+        app.logger.info("Game added: %s", name)
+        return make_response(jsonify({"status": "game added", "game": name}), 201)
+    except ValueError as e:
+        app.logger.error("Error with input id: %s", str(e))
+        return make_response(jsonify({"error": str(e)}), 400)
+    except Exception as e:
+        app.logger.error("Failed to add game to database: %s", str(e))
+        return make_response(jsonify({"error": str(e)}), 500)
+
     
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
