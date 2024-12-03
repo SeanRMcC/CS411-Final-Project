@@ -179,7 +179,7 @@ def search_games(keyword: str) -> Response:
 @app.route("/add-game", methods=["POST"])
 def add_game() -> Response:
     """
-        Route to add a game to teh cart.
+        Route to add a game to the cart.
 
         Expected JSON Input:
             - id (int): The id of the game that will be added.
@@ -223,6 +223,50 @@ def add_game() -> Response:
     except Exception as e:
         app.logger.error("Failed to add game to database: %s", str(e))
         return make_response(jsonify({"error": str(e)}), 500)
+
+@app.route("/delete-game", methods=["DELETE"])
+def delete_game() -> Response:
+    """
+        Route to delete a game from the cart by it's game id.
+
+        Expected JSON Input:
+            - id (int): The id of the game that you want to delete.
+
+        Returns:
+            JSON response indicating the success of deleting the game.
+        Raises:
+            400 error if input validation fails. 
+            404 error if game with id does not exist.
+            500 if there is an issue deleting the game from the database.
+    """
+
+    app.logger.info("Deleting a game from the cart")
+
+    try:
+        data = request.get_json()
+
+        id = data.get("id")
+
+        if not id:
+            raise ValueError("An id must be specified.")
+        
+        id = int(id)
+
+        app.logger.info("Deleting game with id %d", id)
+
+        Games.delete_game(id)
+
+        app.logger.info("Game successfully deleted")
+
+        return make_response({"status": "game deleted"}, 200)
+    except ValueError as e:
+        app.logger.error("Value error: %s", str(e))
+        if str(e) == f"Game with id {id} not found":
+            return make_response(jsonify({"error": str(e)}), 404)
+        return make_response({"error": str(e)}, 400)
+    except Exception as e:
+        app.logger.error("Internal error: %s", str(e))
+        return make_response({"error": str(e)}, 500)
 
     
 if __name__ == "__main__":
