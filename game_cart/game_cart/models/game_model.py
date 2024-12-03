@@ -76,4 +76,6 @@ class Games(db.Model):
         """
         games = cls.query.all()
 
+        logger.info("Games retrieved successfully")
+
         return [asdict(game) for game in games]

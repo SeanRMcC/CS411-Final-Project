@@ -263,10 +263,55 @@ def delete_game() -> Response:
         app.logger.error("Value error: %s", str(e))
         if str(e) == f"Game with id {id} not found":
             return make_response(jsonify({"error": str(e)}), 404)
-        return make_response({"error": str(e)}, 400)
+        return make_response(jsonify({"error": str(e)}), 400)
     except Exception as e:
         app.logger.error("Internal error: %s", str(e))
-        return make_response({"error": str(e)}, 500)
+        return make_response(jsonify({"error": str(e)}), 500)
+
+@app.route("/get-games", methods=["GET"])
+def get_games() -> Response:
+    """
+        Route to get all of the games in the cart.
+
+        Returns:
+            JSON response with all of the games in the cart.
+        Raises:
+            500 if there is an issue retrieving the games from the database.
+    """
+
+    app.logger.info("Getting all games")
+
+    try:
+        games = Games.get_all_games()
+
+        return make_response(jsonify({"games": games}), 200)
+    except Exception as e:
+        app.logger.error("Internal error: %s", str(e))
+        return make_response(jsonify({"error": str(e)}), 500)
+
+@app.route("/get-total-price", methods=["GET"])
+def get_total_price() -> Response:
+    """
+        Route to get the total price of the cart.
+
+        Returns:
+            JSON response with the total price of the cart.
+        Raises:
+            500 if there is an issue retrieving the games from the database.
+    """
+
+    app.logger.info("Getting total price")
+
+    try:
+        games = Games.get_all_games()
+
+        price = sum([game["price"] for game in games])
+
+        return make_response(jsonify({"price": price}), 200)
+    except Exception as e:
+        app.logger.error("Internal error: %s", str(e))
+        return make_response(jsonify({"error": str(e)}), 500)
+
 
     
 if __name__ == "__main__":
