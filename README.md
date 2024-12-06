@@ -47,4 +47,87 @@ We used the [cheapshark api](https://apidocs.cheapshark.com/) to get game search
 }
 ```
 
+#### /add-game
 
+* Request type: POST
+* Purpose: Adds a game (name, id, price) to the cart with a given id
+* Request Body: 
+    * id (int): The id of the game 
+* Response format: JSON
+    * Success Response Example:
+        * Code 201
+        * Content: `{"game": GAME NAME, "status": "game added"}`
+* Example curl request:
+`curl -X POST http://localhost:5000/add-game -H "Content-Type: application/json" -d '{"id": 612}'`
+* Example JSON response:
+```
+{
+  "game": "LEGO Batman",
+  "status": "game added"
+}
+```
+
+#### /delete-game
+
+* Request type: DELETE
+* Purpose: Deletes a game from the cart with a given id
+* Request Body: 
+    * id (int): The id of the game
+* Response format JSON
+    * Success Response Example:
+        * Code 200
+        * Content: `{"status": "game deleted"}`
+* Example curl request:
+`curl -X DELETE http://localhost:5000/delete-game -H "Content-Type: application/json" -d '{"id": 612}'`
+* Example JSON response:
+```
+{
+  "status": "game deleted"
+}
+```
+
+#### /get-games
+
+* Request type: GET
+* Purpose: Returns all of the games in the cart
+* Response format: JSON
+    * Success Response Example:
+        * Code: 200
+        * Content: `{"games": [ALL GAMES IN CART]}`
+* Example curl request:
+`curl -X GET http://localhost:5000/get-games`
+* Example JSON response:
+```
+{
+  "games": [
+    {
+      "id": 400,
+      "name": "Nancy Drew: The Haunted Carousel",
+      "price": 2.09
+    },
+    {
+      "id": 500,
+      "name": "iBomber Defense",
+      "price": 0.74
+    },
+    ...
+  ]
+}
+```
+
+#### /get-total-price
+
+* Request type: GET
+* Purpose: Returns the price of all of the games in the cart
+* Response format: JSON 
+    * Success Response Example:
+        * Code: 200
+        * Content: `{"price": TOTAL PRICE OF CART}`
+* Example curl request:
+`curl -X GET http://localhost:5000/get-total-price`
+* Example JSON response:
+```
+{
+  "price": 4.07
+}
+```
