@@ -39,40 +39,50 @@ check_health() {
 ##########################################################
 
 create_user() {
-  echo "Creating a new user..."
+  username=$1
+  password=$2
+
+  echo "Creating a new user: $username"
   response=$(curl -s -X POST "$BASE_URL/create-account" \
     -H "Content-Type: application/json" \
-    -d '{"username": "testuser", "password": "password123"}')
+    -d "{\"username\": \"$username\", \"password\": \"$password\"}")
   if echo "$response" | grep -q '"status": "user added"'; then
-    echo "User created successfully."
+    echo "User created successfully: $username"
   else
-    echo "Failed to create user."
+    echo "Failed to create user. Response: $response"
     exit 1
   fi
 }
 
 login_user() {
-  echo "Logging in user..."
+  username=$1
+  password=$2
+
+  echo "Logging in user: $username"
   response=$(curl -s -X POST "$BASE_URL/login" \
     -H "Content-Type: application/json" \
-    -d '{"username": "testuser", "password": "password123"}')
-  if echo "$response" | grep -q '"message": "User testuser logged in successfully."'; then
-    echo "User logged in successfully."
+    -d "{\"username\": \"$username\", \"password\": \"$password\"}")
+  if echo "$response" | grep -q '"message": "User .* logged in successfully."'; then
+    echo "User logged in successfully: $username"
   else
-    echo "Failed to log in user."
+    echo "Failed to log in user. Response: $response"
     exit 1
   fi
 }
 
+
 update_password() {
-  echo "Updating user password..."
+  username=$1
+  new_password=$2
+
+  echo "Updating password for user: $username"
   response=$(curl -s -X POST "$BASE_URL/update-password" \
     -H "Content-Type: application/json" \
-    -d '{"username": "testuser", "newPassword": "newpassword123"}')
+    -d "{\"username\": \"$username\", \"newPassword\": \"$new_password\"}")
   if echo "$response" | grep -q '"status": "password changed"'; then
-    echo "Password updated successfully."
+    echo "Password updated successfully for user: $username"
   else
-    echo "Failed to update password."
+    echo "Failed to update password. Response: $response"
     exit 1
   fi
 }
@@ -84,15 +94,18 @@ update_password() {
 ##########################################################
 
 search_games_by_keyword() {
-  echo "Searching for games with keyword 'action'..."
-  response=$(curl -s -X GET "$BASE_URL/search-games/action")
+  keyword=$1
+
+  echo "Searching for games with keyword ($keyword)..."
+  response=$(curl -s -X GET "$BASE_URL/search-games/$keyword")
   if echo "$response" | grep -q '"games":'; then
-    echo "Games searched successfully."
+    echo "Games searched successfully with keyword ($keyword)."
   else
     echo "Failed to search games."
     exit 1
   fi
 }
+
 
 ##########################################################
 #
@@ -101,26 +114,31 @@ search_games_by_keyword() {
 ##########################################################
 
 add_game_to_cart_by_id() {
-  echo "Adding a game to the cart by ID..."
+  id=$1
+
+  echo "Adding game by ID ($id)..."
   response=$(curl -s -X POST "$BASE_URL/add-game" \
     -H "Content-Type: application/json" \
-    -d '{"id": 39}')
+    -d "{\"id\": $id}")
+
   if echo "$response" | grep -q '"status": "game added"'; then
-    echo "Game added successfully."
+    echo "Game added successfully by ID ($id)."
   else
-    echo "Failed to add game."
+    echo "Failed to add game. Response: $response"
     exit 1
   fi
 }
 
 
 delete_game_from_cart_by_id() {
-  echo "Deleting a game from the cart by ID..."
+  id=$1
+
+  echo "Deleting a game from the cart by ID ($id)..."
   response=$(curl -s -X DELETE "$BASE_URL/delete-game" \
     -H "Content-Type: application/json" \
-    -d '{"id": 39}')
+    -d "{\"id\": $id}")
   if echo "$response" | grep -q '"status": "game deleted"'; then
-    echo "Game deleted successfully."
+    echo "Game deleted successfully by id ($id)."
   else
     echo "Failed to delete game."
     exit 1
@@ -128,7 +146,7 @@ delete_game_from_cart_by_id() {
 }
 
 get_games_in_cart() {
-  echo "Retrieving all games in the cart..."
+  echo "Retrieving all games in cart..."
   response=$(curl -s -X GET "$BASE_URL/get-games")
   if echo "$response" | grep -q '"games":'; then
     echo "Games retrieved successfully."
@@ -139,7 +157,7 @@ get_games_in_cart() {
 }
 
 get_total_price_of_cart() {
-  echo "Retrieving the total price of the cart..."
+  echo "Retrieving total price of cart..."
   response=$(curl -s -X GET "$BASE_URL/get-total-price")
   if echo "$response" | grep -q '"price":'; then
     echo "Total price retrieved successfully."
@@ -150,12 +168,21 @@ get_total_price_of_cart() {
 }
 
 check_health
-create_user
-login_user
-update_password
-search_games_by_keyword
-add_game_to_cart_by_id
-delete_game_from_cart_by_id
+
+create_user user1 login123
+login_user user1 login123
+update_password user1 login123
+
+search_games_by_keyword "Action"
+
+add_game_to_cart_by_id 39
+add_game_to_cart_by_id 66
+add_game_to_cart_by_id 236717
+
+delete_game_from_cart_by_id 39
+delete_game_from_cart_by_id 66
+delete_game_from_cart_by_id 236717
+
 get_games_in_cart
 get_total_price_of_cart
 
