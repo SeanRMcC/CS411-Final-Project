@@ -15,11 +15,11 @@ def test_db():
     """
     engine = create_engine(TEST_DATABASE_URL)
     TestingSessionLocal = sessionmaker(bind=engine)
-    db.Model.metadata.create_all(bind=engine)  # Create tables
+    db.Model.metadata.create_all(bind=engine)  
     session = TestingSessionLocal()
-    db.session = session  # Mock the database session
+    db.session = session  
 
-    yield session  # Provide the test database session to tests
+    yield session  
     
     session.rollback()
     session.close()
