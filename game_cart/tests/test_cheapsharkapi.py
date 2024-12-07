@@ -34,9 +34,7 @@ def mock_game_info_response(mocker):
 
 def test_search_for_games(mock_search_response):
     """Test the search_for_games function."""
-
     result = search_for_games(KEYWORD)
-
     assert len(result) == 4
     assert result[0]["name"] == "Minecraft Legends"
     assert result[0]["price"] == "39.99"
@@ -62,10 +60,7 @@ def test_search_for_games_request_failure(mocker):
 
 def test_get_game_info(mock_game_info_response):
     """Test the get_game_info function."""
-
     result = get_game_info(GAME_ID)
-
-    # check if results match
     assert result["name"] == "Minecraft Legends"
     assert result["price"] == "39.99"
     assert result["id"] == GAME_ID
