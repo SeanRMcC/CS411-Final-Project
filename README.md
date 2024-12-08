@@ -14,6 +14,25 @@ Game cart is a REST API that allows users to:
 We used the [cheapshark api](https://apidocs.cheapshark.com/) to get game search as well as game prices. 
 
 ---
+
+## Installation:
+
+Running Game Cart is as easy as running the script to start the docker container. There are no API keys or env variables needed for this application.
+
+From the root directory of the project, navigate to the game_cart directory with: 
+```
+cd game_cart
+```
+Then run the run_docker.sh script with:
+```
+sh run_docker.sh
+```
+The app should now be running on http://localhost:5000. Send a curl request to the health route to see if everything is running:
+```
+curl http://localhost:5000/health
+```
+
+---
 ## Routes:
 
 #### /search-game/\<keyword>
