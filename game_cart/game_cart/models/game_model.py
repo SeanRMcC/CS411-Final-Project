@@ -57,7 +57,7 @@ class Games(db.Model):
             Raises:
                 ValueError: If a game with that id is not in the database.
         """
-        game = cls.query.filter_by(id=game_id).first()
+        game = db.session.query(Games).filter_by(id=game_id).first()
         if not game:
             logger.info(f"Game with id {game_id} not found")
             raise ValueError(f"Game with id {game_id} not found")

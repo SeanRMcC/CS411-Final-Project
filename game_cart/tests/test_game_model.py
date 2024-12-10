@@ -70,7 +70,7 @@ def test_delete_game(test_db, sample_game1, sample_game2):
     assert all_games[0].price == 39.99
     
 
-def test_delete_nonexisting_game():
+def test_delete_nonexisting_game(test_db):
     
     with pytest.raises(ValueError, match="Game with id 1 not found"):
         Games.delete_game(game_id=1)
