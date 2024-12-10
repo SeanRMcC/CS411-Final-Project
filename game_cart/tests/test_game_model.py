@@ -75,8 +75,23 @@ def test_delete_nonexisting_game(test_db):
     with pytest.raises(ValueError, match="Game with id 1 not found"):
         Games.delete_game(game_id=1)
 
-def test_get_all_game():
-    pass
+def test_get_all_game(test_db, sample_game1, sample_game2):
+    #add 2 games
+    Games.create_game(**sample_game1)
+    Games.create_game(**sample_game2)
+    
+    all_games = Games.get_all_games()
+    
+    assert len(all_games) == 2
+    game_names = [game["name"] for game in all_games]  # Access "name" from dictionaries
+    assert "Forza Horizon 5" in game_names
+    assert "Legend of Zelda: Tears of the Kingdom" in game_names
+    
 
-def test_get_all_game_empty():
-    pass
+def test_get_all_game_empty(test_db, sample_game1):
+    
+    Games.create_game(**sample_game1)
+    Games.delete_game(game_id=1)
+    all_games = Games.get_all_games()
+    
+    assert len(all_games) == 0

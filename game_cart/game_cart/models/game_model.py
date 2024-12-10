@@ -74,8 +74,10 @@ class Games(db.Model):
                 List[dict[str, Any]]: A list of all of the games in the database.
 
         """
-        games = cls.query.all()
+        #small change to use db.session so can call in tests
+        games = db.session.query(cls).all()
 
         logger.info("Games retrieved successfully")
+        logger.info(games)
 
         return [asdict(game) for game in games]
